@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcana Corporata - Das Executive Alignment Oracle</title>
+    <style>
+        /* Corporate Mysticism CSS */
+        :root {
+            --bg-color: #0d1117;
+            --text-main: #c9d1d9;
+            --accent-gold: #d4af37;
+            --card-bg: #161b22;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-weight: normal;
+            letter-spacing: 3px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #8b949e;
+            margin-bottom: 40px;
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-family: 'Arial', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 50px;
+        }
+
+        button:hover {
+            background-color: var(--accent-gold);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Das neue Layout für 3 Karten */
+        #spread-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+        }
+
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 280px;
+            /* Startzustand für die Animation: unsichtbar und nach unten verschoben */
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Endzustand für die Animation */
+        .card-wrapper.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .position-title {
+            color: var(--accent-gold);
+            font-family: 'Arial', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 5px;
+            width: 100%;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 380px; /* Feste Höhe, damit es ordentlich aussieht, anpassbar */
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+            background-color: #0d1117; /* Falls ein Bild nicht lädt */
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+            width: 100%;
+        }
+
+        .card-meaning {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #8b949e;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arcana Corporata</h1>
+    <p class="subtitle">Das 3-Phasen Synergie-Spread zur strategischen Ausrichtung</p>
+
+    <button onclick="drawSpread()">Deep Dive Initiieren</button>
+
+    <div id="spread-container">
+        </div>
+
+    <script>
+        const deck = [
+    { id: 1, name: "Der Goldene Fallschirm", meaning: "Sicherheit, Exit-Strategie, Risikomanagement, finanzielle Absicherung" },
+    { id: 2, name: "Die Matrixorganisation", meaning: "Komplexität, Doppelberichtswesen, Netzwerkdenken, Flexibilität" },
+    { id: 3, name: "Die Agile Arbeit", meaning: "Iteration, Feedback, Selbstorganisation, schnelle Anpassung" },
+    { id: 4, name: "Der Mitarbeiter", meaning: "Mensch im Zentrum, Potenzial, Autonomie, Wertschätzung" },
+    { id: 5, name: "Das Management", meaning: "Verantwortung, Entscheidungsgewalt, Balance aus Autorität & Service" },
+    { id: 6, name: "Der Purpose", meaning: "Sinnstiftung, Mission, langfristiger Auftrag jenseits von Profit" },
+    { id: 7, name: "Der Kulturelle Kompass", meaning: "Werte, Normen, unbewusste Regeln, „wie wir hier wirklich arbeiten“" },
+    { id: 8, name: "Der Digitale Zwilling", meaning: "Datengestützte Entscheidung, Simulation, Predictive Leadership" },
+    { id: 9, name: "Der Transformations-Narrator", meaning: "Storytelling im Change, Vision vermitteln, emotionale Führung" },
+    { id: 10, name: "Der Resilienz-Baum", meaning: "Widerstandsfähigkeit, Wurzeln & Flexibilität, Lernen aus Krisen" },
+    { id: 11, name: "Der Diversity-Flügel", meaning: "Vielfalt als Systemstärke, Inklusion, kognitive Diversität" },
+    { id: 12, name: "Der Nachhaltigkeits-Kreis", meaning: "Kreislaufdenken, ESG, Langfristigkeit, planetare Grenzen" }
+];
+
+        // Die Namen für die 3 Positionen
+        const spreadPositions = ["1. Der Status Quo", "2. Die Disruption", "3. Der Action Item"];
+
+        function drawSpread() {
+            const container = document.getElementById('spread-container');
+            
+            // 1. Altes Spread löschen
+            container.innerHTML = '';
+
+            // 2. Deck mischen (Fisher-Yates Algorithmus für echtes Zufalls-Feeling)
+            let shuffledDeck = [...deck];
+            for (let i = shuffledDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+            }
+
+            // 3. Die ersten 3 Karten ziehen
+            const drawnCards = shuffledDeck.slice(0, 3);
+
+            // 4. Karten ins DOM einbauen und animieren
+            drawnCards.forEach((card, index) => {
+                // Wrapper erstellen
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-wrapper';
+                
+                // HTML-Struktur der Einzelkarte definieren
+                cardDiv.innerHTML = `
+                    <div class="position-title">${spreadPositions[index]}</div>
+                    <img class="card-image" src="Cards/${card.id}.png" alt="${card.name}" onerror="this.style.display='none'">
+                    <h2 class="card-title">${card.name}</h2>
+                    <p class="card-meaning">„${card.meaning}“</p>
+                `;
+
+                // Karte an Container anhängen
+                container.appendChild(cardDiv);
+
+                // 5. Zeitversetzte Animation triggern (Stagger-Effekt)
+                // Karte 1 startet nach 100ms, Karte 2 nach 900ms, Karte 3 nach 1700ms
+                setTimeout(() => {
+                    cardDiv.classList.add('visible');
+                }, 100 + (index * 800));
+            });
+        }
+    </script>
+</body>
+</html>
